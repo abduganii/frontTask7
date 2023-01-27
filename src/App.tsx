@@ -51,7 +51,7 @@ function App() {
     })
       .then(res => res.json())
       .then(data => {
-        data.map(el => {
+        data.map((el: any) => {
           if (el?._id == token) {
             setUser(el?.name)
           }
