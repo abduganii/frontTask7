@@ -27,7 +27,21 @@
 .App-link {
   color: #61dafb;
 }
-
+.btnname{
+  position: absolute;
+  border: none;
+  background-color: white;
+  color: rgb(45, 45, 248);
+  top: 30px;
+  right: 70px;
+}
+.btnname:hover{
+  color:rgb(91, 91, 245) ;
+}
+.box{
+  display: flex;
+  flex-direction: column;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

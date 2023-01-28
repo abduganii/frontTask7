@@ -10,6 +10,7 @@ import Login from "./components/login/login.jsx";
 import useToken from "./Hooks/useToken.js";
 
 const AppContainer = styled.div`
+position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -32,7 +33,7 @@ const MainContainer = styled.div`
 `;
 
 function App() {
-  const [token] = useToken()
+  const [token, setToken] = useToken()
   const [isInRoom, setInRoom] = useState(false);
   const [playerSymbol, setPlayerSymbol] = useState<"x" | "o">("x");
   const [isPlayerTurn, setPlayerTurn] = useState(false);
@@ -45,26 +46,24 @@ function App() {
         console.log("Error: ", err);
       });
   };
-  const fetchMes = () => {
-    fetch(`https://backend6.onrender.com/user`, {
-      headers: { "Content-Type": "application/json", },
-    })
-      .then(res => res.json())
-      .then(data => {
-        data.map((el: any) => {
-          if (el?._id == token) {
-            setUser(el?.name)
-          }
-        })
+
+  fetch(`https://backend6.onrender.com/user`, {
+    headers: { "Content-Type": "application/json", },
+  })
+    .then(res => res.json())
+    .then(data => {
+      data.map((el: any) => {
+        if (el?._id == token) {
+          setUser(el?.name)
+        }
       })
+    })
 
 
-  }
+
 
   useEffect(() => {
     connectSocket();
-    fetchMes();
-
   }, []);
 
   const gameContextValue: IGameContextProps = {
@@ -86,6 +85,7 @@ function App() {
       <GameContext.Provider value={gameContextValue}>
         <AppContainer>
           <WelcomeText>Welcome {user} to Tic-Tac-Toe</WelcomeText>
+          <button className="btnname" onClick={() => setToken(false)}> change name</button>
           <MainContainer>
             {!isInRoom && <JoinRoom />}
             {isInRoom && <Game />}

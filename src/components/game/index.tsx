@@ -86,6 +86,8 @@ export function Game() {
     setPlayerSymbol,
     setPlayerTurn,
     isPlayerTurn,
+    setInRoom,
+    isInRoom,
     setGameStarted,
     isGameStarted,
   } = useContext(gameContext);
@@ -151,9 +153,19 @@ export function Game() {
       if (currentPlayerWon && otherPlayerWon) {
         gameService.gameWin(socketService.socket, "The Game is a TIE!");
         alert("The Game is a TIE!");
+        setMatrix([
+          [null, null, null],
+          [null, null, null],
+          [null, null, null],
+        ])
       } else if (currentPlayerWon && !otherPlayerWon) {
         gameService.gameWin(socketService.socket, "You Lost!");
         alert("You Won!");
+        setMatrix([
+          [null, null, null],
+          [null, null, null],
+          [null, null, null],
+        ])
       }
 
       setPlayerTurn(false);
@@ -183,8 +195,12 @@ export function Game() {
     if (socketService.socket)
       gameService.onGameWin(socketService.socket, (message) => {
         console.log("Here", message);
-        setPlayerTurn(false);
         alert(message);
+        setMatrix([
+          [null, null, null],
+          [null, null, null],
+          [null, null, null],
+        ])
       });
   };
 
@@ -197,36 +213,52 @@ export function Game() {
 
 
   return (
-    <GameContainer>
-      {!isGameStarted && (
-        <h2>Waiting for Other Player to Join to Start the Game!</h2>
-      )}
-      {(!isGameStarted || !isPlayerTurn) && <PlayStopper />}
-      {matrix.map((row, rowIdx) => {
-        return (
-          <RowContainer>
-            {row.map((column, columnIdx) => (
-              <Cell
-                borderRight={columnIdx < 2}
-                borderLeft={columnIdx > 0}
-                borderBottom={rowIdx < 2}
-                borderTop={rowIdx > 0}
-                onClick={() =>
-                  updateGameMatrix(columnIdx, rowIdx, playerSymbol)
-                }
-              >
-                {column && column !== "null" ? (
-                  column === "x" ? (
-                    <X />
-                  ) : (
-                    <O />
-                  )
-                ) : null}
-              </Cell>
-            ))}
-          </RowContainer>
-        );
-      })}
-    </GameContainer>
+    <div className="box">
+      <GameContainer>
+        {!isGameStarted && (
+          <h2>Waiting for Other Player to Join to Start the Game!</h2>
+        )}
+        {(!isGameStarted || !isPlayerTurn) && <PlayStopper />}
+        {matrix.map((row, rowIdx) => {
+          return (
+            <RowContainer>
+              {row.map((column, columnIdx) => (
+                <Cell
+                  borderRight={columnIdx < 2}
+                  borderLeft={columnIdx > 0}
+                  borderBottom={rowIdx < 2}
+                  borderTop={rowIdx > 0}
+                  onClick={() =>
+                    updateGameMatrix(columnIdx, rowIdx, playerSymbol)
+                  }
+                >
+                  {column && column !== "null" ? (
+                    column === "x" ? (
+                      <X />
+                    ) : (
+                      <O />
+                    )
+                  ) : null}
+                </Cell>
+              ))}
+            </RowContainer>
+          );
+        })}
+
+      </GameContainer>
+      <div>
+        <button onClick={() => {
+          setPlayerTurn(true);
+          setMatrix([
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
+          ])
+        }}>play game</button>
+        <button onClick={() => {
+          setInRoom(false)
+        }}>left game</button>
+      </div>
+    </div>
   );
 }
